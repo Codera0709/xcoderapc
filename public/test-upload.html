@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Upload KTP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
+        <h1 class="text-2xl font-bold mb-4">Test Upload KTP</h1>
+        
+        <div class="mb-4">
+            <label for="ktp-upload" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                <div id="upload-placeholder" class="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg class="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span></p>
+                    <p class="text-xs text-gray-500">PNG, JPG atau JPEG (MAX. 5MB)</p>
+                </div>
+                <img id="preview-image" class="hidden w-full h-full object-contain" alt="Preview KTP">
+                <input id="ktp-upload" type="file" class="hidden" accept="image/*" />
+            </label>
+        </div>
+
+        <div class="text-center mb-4">
+            <button id="process-btn" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Proses KTP
+            </button>
+        </div>
+
+        <div id="status" class="p-4 bg-gray-50 rounded">
+            <h3 class="font-bold mb-2">Status:</h3>
+            <div id="status-content" class="text-sm text-gray-600">
+                Belum ada file yang dipilih
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ktpUpload = document.getElementById('ktp-upload');
+            const processBtn = document.getElementById('process-btn');
+            const uploadPlaceholder = document.getElementById('upload-placeholder');
+            const previewImage = document.getElementById('preview-image');
+            const statusContent = document.getElementById('status-content');
+
+            function updateStatus(message) {
+                statusContent.innerHTML = message;
+                console.log('Status:', message);
+            }
+
+            updateStatus('✅ JavaScript loaded successfully');
+
+            ktpUpload.addEventListener('change', function(e) {
+                updateStatus('📁 File change event triggered');
+                
+                const file = e.target.files[0];
+                if (!file) {
+                    updateStatus('❌ No file selected');
+                    return;
+                }
+
+                updateStatus(`📄 File selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`);
+
+                // Validate file type
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                if (!validTypes.includes(file.type)) {
+                    updateStatus(`❌ Invalid file type: ${file.type}`);
+                    alert('Format file tidak valid. Gunakan JPG, JPEG, atau PNG');
+                    return;
+                }
+
+                updateStatus(`✅ File type valid: ${file.type}`);
+
+                // Validate file size (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    updateStatus(`❌ File too large: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+                    alert('Ukuran file terlalu besar. Maksimal 5MB');
+                    return;
+                }
+
+                updateStatus(`✅ File size valid: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    updateStatus('🖼️ Image loaded, showing preview...');
+                    previewImage.src = e.target.result;
+                    uploadPlaceholder.classList.add('hidden');
+                    previewImage.classList.remove('hidden');
+                    
+                    // Enable button
+                    processBtn.disabled = false;
+                    processBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    processBtn.classList.add('hover:bg-blue-700');
+                    
+                    updateStatus('✅ Preview shown, button enabled. Click "Proses KTP" to continue.');
+                };
+                reader.onerror = function() {
+                    updateStatus('❌ Error reading file');
+                };
+                reader.readAsDataURL(file);
+            });
+
+            processBtn.addEventListener('click', function() {
+                const file = ktpUpload.files[0];
+                if (!file) {
+                    updateStatus('❌ No file to process');
+                    alert('Silakan pilih file KTP terlebih dahulu');
+                    return;
+                }
+
+                updateStatus('🔄 Processing button clicked!');
+                processBtn.disabled = true;
+                processBtn.textContent = 'Memproses...';
+
+                // Simulate processing
+                setTimeout(() => {
+                    updateStatus('✅ Processing complete! (This is a test page)');
+                    processBtn.textContent = 'Proses KTP';
+                    processBtn.disabled = false;
+                    alert('Test berhasil! Button berfungsi dengan baik.');
+                }, 2000);
+            });
+
+            // Log initial state
+            console.log('Elements found:');
+            console.log('- ktpUpload:', ktpUpload);
+            console.log('- processBtn:', processBtn);
+            console.log('- uploadPlaceholder:', uploadPlaceholder);
+            console.log('- previewImage:', previewImage);
+        });
+    </script>
+</body>
+</html>

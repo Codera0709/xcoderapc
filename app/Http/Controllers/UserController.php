@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -14,7 +15,7 @@ class UserController extends Controller
      */
     public function index(): View
     {
-        $users = User::paginate(10);
+        $users = User::with('roles')->paginate(10);
         
         return view('pages.users.index', compact('users'));
     }
@@ -22,9 +23,10 @@ class UserController extends Controller
     /**
      * Show the form for creating a new user.
      */
-    public function create()
+    public function create(): View
     {
-        //
+        $roles = Role::all();
+        return view('pages.users.create', compact('roles'));
     }
 
     /**
@@ -36,16 +38,18 @@ class UserController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required|in:admin,editor,viewer',
+            'role' => 'required|in:SuperAdmin,Admin,Employee,Public,Guest',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->first_name . ' ' . $request->last_name,
             'email' => $request->email,
-            'role' => $request->role,
             'password' => bcrypt($request->password),
         ]);
+
+        // Assign role using Spatie
+        $user->assignRole($request->role);
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
@@ -61,9 +65,10 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified user.
      */
-    public function edit(User $user)
+    public function edit(User $user): View
     {
-        //
+        $roles = Role::all();
+        return view('pages.users.edit', compact('user', 'roles'));
     }
 
     /**
@@ -75,14 +80,16 @@ class UserController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'role' => 'required|in:admin,editor,viewer',
+            'role' => 'required|in:SuperAdmin,Admin,Employee,Public,Guest',
         ]);
 
         $user->update([
             'name' => $request->first_name . ' ' . $request->last_name,
             'email' => $request->email,
-            'role' => $request->role,
         ]);
+
+        // Sync role using Spatie
+        $user->syncRoles([$request->role]);
 
         if ($request->filled('password')) {
             $request->validate([

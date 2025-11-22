@@ -35,4 +35,18 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | OCR Services Configuration
+    |--------------------------------------------------------------------------
+    */
+
+    'google' => [
+        'vision_credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+    ],
+
+    'ocr_space' => [
+        'api_key' => env('OCR_SPACE_API_KEY'),
+    ],
+
 ];

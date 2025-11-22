@@ -85,6 +85,22 @@
                     <span x-show="sidebarOpen" x-transition>Reports</span>
                 </a>
 
+                <!-- Pra-Sales -->
+                <a href="{{ route('presales.index') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('presales.*') ? 'bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span x-show="sidebarOpen" x-transition>Pra-Sales</span>
+                </a>
+
+                <!-- Booking Unit -->
+                <a href="{{ route('booking-units.index') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m-6 0h6m-6 0l-2 12a1 1 0 001 1h8a1 1 0 001-1L16 7m-6 0l-2-3h8l-2 3" />
+                    </svg>
+                    <span x-show="sidebarOpen" x-transition>Booking Unit</span>
+                </a>
+
                 <!-- Divider -->
                 <div x-show="sidebarOpen" x-transition class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
                     <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Settings</p>
@@ -110,6 +126,7 @@
         </nav>
 
         <!-- User Info at Bottom -->
+        @auth
         <div class="border-t border-gray-200 dark:border-gray-700 p-4" x-show="sidebarOpen" x-transition>
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold">
@@ -121,5 +138,6 @@
                 </div>
             </div>
         </div>
+        @endauth
     </div>
 </aside>

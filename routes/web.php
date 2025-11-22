@@ -5,7 +5,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\BookingUnitController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PreSalesController;
+use App\Http\Controllers\SlikDataController;
+use App\Http\Controllers\SpouseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -24,7 +28,7 @@ Route::get('/interactive-demo', [DashboardController::class, 'interactiveDemo'])
 
 Route::get('/feedback-demo', [DashboardController::class, 'feedbackDemo'])->middleware(['auth', 'verified'])->name('feedback.demo');
 
-Route::resource('/users', UserController::class)->middleware(['auth', 'verified'])->except(['show']);
+Route::resource('/users', UserController::class)->middleware(['auth', 'verified', 'role:SuperAdmin,Admin'])->except(['show']);
 Route::get('/settings', [SettingController::class, 'index'])->middleware(['auth', 'verified'])->name('settings.index');
 Route::post('/settings/profile', [SettingController::class, 'updateProfile'])->middleware(['auth', 'verified'])->name('settings.profile.update');
 Route::post('/settings/account', [SettingController::class, 'updateAccount'])->middleware(['auth', 'verified'])->name('settings.account.update');
@@ -39,5 +43,31 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Pra-Sales Routes
+Route::resource('presales', PreSalesController::class);
+Route::post('presales/bulk-delete', [PreSalesController::class, 'bulkDelete'])->name('presales.bulk-delete');
+Route::post('presales/bulk-export', [PreSalesController::class, 'bulkExport'])->name('presales.bulk-export');
+
+// Spouse Routes
+Route::get('spouses/create/{personId}', [SpouseController::class, 'create'])->name('spouses.create');
+Route::post('spouses/{personId}', [SpouseController::class, 'store'])->name('spouses.store');
+Route::get('spouses/edit/{personId}', [SpouseController::class, 'edit'])->name('spouses.edit');
+Route::put('spouses/{personId}', [SpouseController::class, 'update'])->name('spouses.update');
+
+// Booking Unit Routes
+Route::resource('booking-units', BookingUnitController::class);
+Route::get('booking-units/search/person', [BookingUnitController::class, 'searchPerson'])->name('booking-units.search.person');
+
+// SLIK Data Routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('slik', SlikDataController::class);
+    Route::post('slik/upload-ktp', [SlikDataController::class, 'uploadKtp'])->name('slik.upload-ktp');
+});
+
+// Test routes (remove in production)
+if (config('app.debug')) {
+    require __DIR__.'/test.php';
+}
 
 require __DIR__.'/auth.php';
