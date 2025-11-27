@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Person;
+use App\Http\Requests\StorePersonRequest;
+use App\Http\Requests\UpdatePersonRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -50,28 +52,9 @@ class PreSalesController extends Controller
         return view('presales.create', compact('persons'));
     }
 
-    public function store(Request $request)
+    public function store(StorePersonRequest $request)
     {
-        $validated = $request->validate([
-            'nik' => 'required|digits:16|unique:persons,nik',
-            'nama_lengkap' => 'required|string|max:255',
-            'tempat_lahir' => 'required|string|max:255',
-            'tanggal_lahir' => 'required|date',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-            'golongan_darah' => 'nullable|string|max:3',
-            'alamat' => 'required|string',
-            'rt' => 'required|string|max:3',
-            'rw' => 'required|string|max:3',
-            'kelurahan' => 'required|string|max:255',
-            'kecamatan' => 'required|string|max:255',
-            'kabupaten_kota' => 'required|string|max:255',
-            'provinsi' => 'required|string|max:255',
-            'agama' => 'required|string|max:255',
-            'status_perkawinan' => 'required|in:Belum Kawin,Kawin,Cerai Hidup,Cerai Mati',
-            'pekerjaan' => 'required|string|max:255',
-            'kewarganegaraan' => 'required|string|max:255',
-            'berlaku_hingga' => 'required|string|max:255',
-        ]);
+        $validated = $request->validated();
 
         $person = Person::create($validated);
 
@@ -96,28 +79,9 @@ class PreSalesController extends Controller
         return view('presales.edit', compact('presale', 'persons'));
     }
 
-    public function update(Request $request, Person $presale)
+    public function update(UpdatePersonRequest $request, Person $presale)
     {
-        $validated = $request->validate([
-            'nik' => ['required', 'digits:16', Rule::unique('persons')->ignore($presale->id)],
-            'nama_lengkap' => 'required|string|max:255',
-            'tempat_lahir' => 'required|string|max:255',
-            'tanggal_lahir' => 'required|date',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-            'golongan_darah' => 'nullable|string|max:3',
-            'alamat' => 'required|string',
-            'rt' => 'required|string|max:3',
-            'rw' => 'required|string|max:3',
-            'kelurahan' => 'required|string|max:255',
-            'kecamatan' => 'required|string|max:255',
-            'kabupaten_kota' => 'required|string|max:255',
-            'provinsi' => 'required|string|max:255',
-            'agama' => 'required|string|max:255',
-            'status_perkawinan' => 'required|in:Belum Kawin,Kawin,Cerai Hidup,Cerai Mati',
-            'pekerjaan' => 'required|string|max:255',
-            'kewarganegaraan' => 'required|string|max:255',
-            'berlaku_hingga' => 'required|string|max:255',
-        ]);
+        $validated = $request->validated();
 
         $presale->update($validated);
 

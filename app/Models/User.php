@@ -11,7 +11,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, \Laravel\Sanctum\HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -23,17 +23,12 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'bio',
-        'username',
-        'timezone',
-        'language',
-        'email_notifications',
-        'push_notifications',
-        'sms_notifications',
-        'theme',
-        'layout',
-        'font_size',
     ];
+
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -55,9 +50,6 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'email_notifications' => 'boolean',
-            'push_notifications' => 'boolean',
-            'sms_notifications' => 'boolean',
         ];
     }
 }

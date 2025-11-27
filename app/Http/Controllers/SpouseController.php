@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Person;
+use App\Http\Requests\StoreSpouseRequest;
+use App\Http\Requests\UpdateSpouseRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -14,29 +16,11 @@ class SpouseController extends Controller
         return view('spouses.create', compact('person'));
     }
 
-    public function store(Request $request, $personId)
+    public function store(StoreSpouseRequest $request, $personId)
     {
         $person = Person::findOrFail($personId);
         
-        $validated = $request->validate([
-            'spouse_nik' => 'required|digits:16|unique:persons,nik',
-            'spouse_nama_lengkap' => 'required|string|max:255',
-            'spouse_tempat_lahir' => 'required|string|max:255',
-            'spouse_tanggal_lahir' => 'required|date',
-            'spouse_jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-            'spouse_golongan_darah' => 'nullable|string|max:3',
-            'spouse_alamat' => 'required|string',
-            'spouse_rt' => 'required|string|max:3',
-            'spouse_rw' => 'required|string|max:3',
-            'spouse_kelurahan' => 'required|string|max:255',
-            'spouse_kecamatan' => 'required|string|max:255',
-            'spouse_kabupaten_kota' => 'required|string|max:255',
-            'spouse_provinsi' => 'required|string|max:255',
-            'spouse_agama' => 'required|string|max:255',
-            'spouse_pekerjaan' => 'required|string|max:255',
-            'spouse_kewarganegaraan' => 'required|string|max:255',
-            'spouse_berlaku_hingga' => 'required|string|max:255',
-        ]);
+        $validated = $request->validated();
 
         // Prepare spouse data by removing the 'spouse_' prefix
         $spouseData = [];
@@ -69,32 +53,14 @@ class SpouseController extends Controller
         return view('spouses.edit', compact('person'));
     }
 
-    public function update(Request $request, $personId)
+    public function update(UpdateSpouseRequest $request, $personId)
     {
         $person = Person::with('spouse')->findOrFail($personId);
         if (!$person->spouse) {
             return redirect()->route('spouses.create', $personId)->with('error', 'Spouse data not found');
         }
         
-        $validated = $request->validate([
-            'spouse_nik' => ['required', 'digits:16', Rule::unique('persons')->ignore($person->spouse->id)],
-            'spouse_nama_lengkap' => 'required|string|max:255',
-            'spouse_tempat_lahir' => 'required|string|max:255',
-            'spouse_tanggal_lahir' => 'required|date',
-            'spouse_jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-            'spouse_golongan_darah' => 'nullable|string|max:3',
-            'spouse_alamat' => 'required|string',
-            'spouse_rt' => 'required|string|max:3',
-            'spouse_rw' => 'required|string|max:3',
-            'spouse_kelurahan' => 'required|string|max:255',
-            'spouse_kecamatan' => 'required|string|max:255',
-            'spouse_kabupaten_kota' => 'required|string|max:255',
-            'spouse_provinsi' => 'required|string|max:255',
-            'spouse_agama' => 'required|string|max:255',
-            'spouse_pekerjaan' => 'required|string|max:255',
-            'spouse_kewarganegaraan' => 'required|string|max:255',
-            'spouse_berlaku_hingga' => 'required|string|max:255',
-        ]);
+        $validated = $request->validated();
 
         // Prepare spouse data by removing the 'spouse_' prefix
         $spouseData = [];

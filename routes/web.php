@@ -8,7 +8,6 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\BookingUnitController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PreSalesController;
-use App\Http\Controllers\SlikDataController;
 use App\Http\Controllers\SpouseController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,15 +17,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/components-demo', [DashboardController::class, 'componentsDemo'])->middleware(['auth', 'verified'])->name('components.demo');
 
-Route::get('/forms-demo', [DashboardController::class, 'formsDemo'])->middleware(['auth', 'verified'])->name('forms.demo');
-
-Route::get('/data-demo', [DashboardController::class, 'dataDemo'])->middleware(['auth', 'verified'])->name('data.demo');
-
-Route::get('/interactive-demo', [DashboardController::class, 'interactiveDemo'])->middleware(['auth', 'verified'])->name('interactive.demo');
-
-Route::get('/feedback-demo', [DashboardController::class, 'feedbackDemo'])->middleware(['auth', 'verified'])->name('feedback.demo');
 
 Route::resource('/users', UserController::class)->middleware(['auth', 'verified', 'role:SuperAdmin,Admin'])->except(['show']);
 Route::get('/settings', [SettingController::class, 'index'])->middleware(['auth', 'verified'])->name('settings.index');
@@ -59,15 +50,8 @@ Route::put('spouses/{personId}', [SpouseController::class, 'update'])->name('spo
 Route::resource('booking-units', BookingUnitController::class);
 Route::get('booking-units/search/person', [BookingUnitController::class, 'searchPerson'])->name('booking-units.search.person');
 
-// SLIK Data Routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('slik', SlikDataController::class);
-    Route::post('slik/upload-ktp', [SlikDataController::class, 'uploadKtp'])->name('slik.upload-ktp');
-});
 
 // Test routes (remove in production)
-if (config('app.debug')) {
-    require __DIR__.'/test.php';
-}
+
 
 require __DIR__.'/auth.php';
